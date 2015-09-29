@@ -48,6 +48,8 @@ FA = cell(length(tsefactor_range),1);
 mtf_xy = cell(length(tsefactor_range),1);
 mtf_z = cell(length(tsefactor_range),1);
 sig_loss_T1 = zeros(length(tsefactor_range),1);
+SNR = zeros(length(tsefactor_range),1);
+scn_time = zeros(length(tsefactor_range),1);
 SNReff = zeros(length(tsefactor_range),1);
 
 for ii = 1:length(tsefactor_range)
@@ -85,10 +87,13 @@ for ii = 1:length(tsefactor_range)
                                                     % due to T1 effects
 
     % Calculate SNR efficiency:
-    SNR = prod(vox)*sqrt(Nx*Ny*Nz)*sqrt(esp-2); % takes into account
+    % SNR takes into account signal loss from train of refocusing angles in
+    % first shot:
+    SNR(ii) = s0_shot1*prod(vox)*sqrt(Nx*Ny*Nz)*sqrt(esp-2); % takes into account
     % voxel size and readout bandwidth, assuming a sampling interval of
     % esp-2ms
-    SNReff(ii) = SNR/sqrt(TR(ii)*nr_shots); % SNR/sqrt(scan time)
+    scn_time(ii) = TR(ii)*nr_shots;
+    SNReff(ii) = SNR(ii)/sqrt(TR(ii)*nr_shots); % SNR/sqrt(scan time)
 end
 
 end
